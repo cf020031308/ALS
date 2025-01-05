@@ -291,7 +291,8 @@ class PygPCQM4Mv2ContactDataset(InMemoryDataset):
         self.smiles2graph = smiles2graph
         self.folder = osp.join(root, 'pcqm4m-v2-contact', subset)
 
-        self.url = 'https://datasets-public-research.s3.us-east-2.amazonaws.com/PCQM4M/pcqm4m-contact.tsv.gz'
+        # self.url = 'https://datasets-public-research.s3.us-east-2.amazonaws.com/PCQM4M/pcqm4m-contact.tsv.gz'
+        self.url = 'https://zenodo.org/records/6975830/files/pcqm4m-contact.tsv.gz'  # https://github.com/rampasek/GraphGPS/issues/48
         self.version = 'f7ffb27942145a2e72f6f5f51716d3bc'  # MD5 hash of the intended dataset file
 
         if subset == 'full':

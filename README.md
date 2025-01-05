@@ -11,7 +11,7 @@ We reduce the space complexity of its optimization from $O(L)$ to $O(1)$ with th
 
 Besides, we design a short-range message passing module for ALS to handle heterophily.
 
-## Experiments
+## Node Classification Performance
 
 | Dataset                | Graph Type   | SotA method | SotA Accuracy | **ALS Accuracy** |
 |------------------------|--------------|-------------|---------------|------------------|
@@ -20,17 +20,17 @@ Besides, we design a short-range message passing module for ALS to handle hetero
 | Coauthor CS            | Homophilic   | GGCN        | 95.25         | **96.22**        |
 | Coauthor Physics       | Homophilic   | GGCN        | 97.07         | **97.54**        |
 | WikiCS                 | Homophilic   | OrderedGNN  | 79.01         | **80.97**        |
-| Roman Empire           | Heterophilic | DIR-GNN     | **91.23**     | 88.90            |
+| Roman Empire           | Heterophilic | GAT-sep     | 88.75         | **88.90**        |
 | Amazon Ratings         | Heterophilic | GraphSAGE   | 53.63         | **54.10**        |
 | Minesweeper            | Heterophilic | GAT-sep     | 93.91         | **95.55**        |
 | Tolokers               | Heterophilic | GAT-sep     | 83.78         | **86.09**        |
 | Questions              | Heterophilic | FSGNN       | **78.86**     | 78.26            |
 | PascalVOC-SP           | Long-range   | GatedGCN    | 38.80         | **39.59**        |
-| COCO-SP                | Long-range   | GatedGCN    | 29.22         | **29.62**        |
+| COCO-SP                | Long-range   | GatedGCN    | 29.22         | **30.08**        |
 | PascalVOC-SP (with GT) | Long-range   | GraphGPS    | 44.40         | **44.93**        |
-| COCO-SP (with GT)      | Long-range   | Graph Mamba | **39.74**     | 38.53            |
+| COCO-SP (with GT)      | Long-range   | Graph Mamba | **39.74**     | 39.23            |
 
-## Reproduce
+## Reproduce Experiments
 
 ```bash
 args="--implicit --with-cg --with-basis --with-stop --max-epochs 1000 --runs 10 --early-stop-epochs 100 --hidden 32"

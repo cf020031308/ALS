@@ -64,7 +64,7 @@ gnn:
   normalize_adj: False
   als:
     asym: True
-    dot_attention: True
+    dot_attention: False
     heads: 4
     alpha: 0.0
     skip_connections: 2

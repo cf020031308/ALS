@@ -334,7 +334,7 @@ class PPRGAT(nn.Module):
             norm='LayerNorm', dropout=dropout, plain_last=False
         ) if (n_layers and edge_dim) else nn.Identity()
         self.appr = {
-            'gat': GATv2Conv, 'pyg': MAPR_PyG
+            'gat': GATv2Conv
         }.get(frame.lower(), MAPR)(
             hidden_channels if n_layers else in_channels,
             hidden_channels, heads,
@@ -359,7 +359,7 @@ class MultiPPRGAT(nn.Module):
             heads, dropout, frame='', edge_dim=None, **kwargs):
         super(self.__class__, self).__init__()
         hidden_channels = hidden * heads
-        appr = {'gat': GATv2Conv, 'pyg': MAPR_PyG}.get(frame.lower(), MAPR)
+        appr = {'gat': GATv2Conv}.get(frame.lower(), MAPR)
         self.enc = nn.Sequential(
             nn.Linear(in_channels, hidden_channels),
             nn.Dropout(dropout),
@@ -372,7 +372,9 @@ class MultiPPRGAT(nn.Module):
             nn.LayerNorm(hidden_channels) for _ in range(n_layers)])
         self.convs = nn.ModuleList([
             appr(hidden_channels, hidden_channels, heads,
-                 edge_dim=hidden_channels if edge_dim else None, **kwargs)
+                 edge_dim=hidden_channels if edge_dim else None,
+                 post_norm=False,
+                 **kwargs)
             for _ in range(n_layers)])
         self.fns = nn.ModuleList([
             nn.Sequential(
