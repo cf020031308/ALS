@@ -1,4 +1,5 @@
 import torch
+import torch_geometric.nn as pyg_nn
 import torch_geometric.graphgym.models.head  # noqa, register module
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
@@ -9,6 +10,9 @@ from graphgps.layer.gatedgcn_layer import GatedGCNLayer
 from graphgps.layer.gine_conv_layer import GINEConvLayer
 from graphgps.layer.gcn_conv_layer import GCNConvLayer
 from graphgps.layer.als_conv_layer import MAPR
+from graphgps.layer.ignn_conv_layer import IGNN
+from graphgps.layer.eignn_conv_layer import EIGNN
+from graphgps.layer.gpr_conv_layer import GPR_prop
 
 
 class ALSConvLayer(torch.nn.Module):
@@ -31,6 +35,76 @@ class ALSConvLayer(torch.nn.Module):
     def forward(self, batch):
         x_in, batch.x = batch.x, self.act(self.model(
             batch.x, batch.edge_index, edge_attr=batch.edge_attr))
+        if self.residual:
+            batch.x = x_in + batch.x
+        return batch
+
+
+class IConvLayer(torch.nn.Module):
+    def __init__(self, dim_in, dim_out, dropout, residual):
+        super(self.__class__, self).__init__()
+        self.residual = residual
+        self.act = torch.nn.Sequential(
+            register.act_dict[cfg.gnn.act](),
+            torch.nn.Dropout(dropout))
+        gcn1 = pyg_nn.GCNConv(dim_in, dim_in, bias=False)
+        self.model = IGNN(gcn1, dim_in, dim_out)
+
+    def forward(self, batch):
+        x_in, batch.x = batch.x, self.act(self.model(
+            batch.x, batch.edge_index))
+        if self.residual:
+            batch.x = x_in + batch.x
+        return batch
+
+
+class EIConvLayer(torch.nn.Module):
+    def __init__(self, dim_in, dim_out, dropout, residual):
+        super(self.__class__, self).__init__()
+        self.residual = residual
+        self.act = torch.nn.Sequential(
+            register.act_dict[cfg.gnn.act](),
+            torch.nn.Dropout(dropout))
+        self.model = EIGNN(dim_in, dim_out)
+
+    def forward(self, batch):
+        x_in, batch.x = batch.x, self.act(self.model(batch))
+        if self.residual:
+            batch.x = x_in + batch.x
+        return batch
+
+
+class APPNPLayer(torch.nn.Module):
+    def __init__(self, dim_in, dim_out, dropout, residual):
+        super(self.__class__, self).__init__()
+        self.residual = residual
+        self.act = torch.nn.Sequential(
+            register.act_dict[cfg.gnn.act](),
+            torch.nn.Dropout(dropout))
+        self.enc = pyg_nn.MLP([dim_in, dim_in, dim_out])
+        self.model = pyg_nn.APPNP(K=10, alpha=cfg.gnn.ppr)
+
+    def forward(self, batch):
+        x_in, batch.x = batch.x, self.act(self.model(
+            self.enc(batch.x), batch.edge_index))
+        if self.residual:
+            batch.x = x_in + batch.x
+        return batch
+
+
+class GPRLayer(torch.nn.Module):
+    def __init__(self, dim_in, dim_out, dropout, residual):
+        super(self.__class__, self).__init__()
+        self.residual = residual
+        self.act = torch.nn.Sequential(
+            register.act_dict[cfg.gnn.act](),
+            torch.nn.Dropout(dropout))
+        self.enc = pyg_nn.MLP([dim_in, dim_in, dim_out])
+        self.model = GPR_prop(K=10, alpha=cfg.gnn.ppr)
+
+    def forward(self, batch):
+        x_in, batch.x = batch.x, self.act(self.model(
+            self.enc(batch.x), batch.edge_index))
         if self.residual:
             batch.x = x_in + batch.x
         return batch
@@ -77,6 +151,14 @@ class CustomGNN(torch.nn.Module):
             return GCNConvLayer
         elif model_type == 'als':
             return ALSConvLayer
+        elif model_type == 'ignn':
+            return IConvLayer
+        elif model_type == 'eignn':
+            return EIConvLayer
+        elif model_type == 'appnp':
+            return APPNPLayer
+        elif model_type == 'gprgnn':
+            return GPRLayer
         else:
             raise ValueError("Model {} unavailable".format(model_type))
 

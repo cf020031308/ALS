@@ -25,6 +25,8 @@ Besides, we design a short-range message passing module for ALS to handle hetero
 | Minesweeper            | Heterophilic | GAT-sep     | 93.91         | **95.55**        |
 | Tolokers               | Heterophilic | GAT-sep     | 83.78         | **86.09**        |
 | Questions              | Heterophilic | FSGNN       | **78.86**     | 78.26            |
+| OGB-Arxiv | Large | - | [Leaderboard](https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-arxiv) | 72.71 |
+| OGB-Products | Large | - | [Leaderboard](https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-products) | 81.78 |
 | PascalVOC-SP           | Long-range   | GatedGCN    | 38.80         | **39.59**        |
 | COCO-SP                | Long-range   | GatedGCN    | 29.22         | **30.08**        |
 | PascalVOC-SP (with GT) | Long-range   | GraphGPS    | 44.40         | **44.93**        |
@@ -48,6 +50,10 @@ python3 -u main.py MPG amazon_ratings $args --heads 10 --n-layers 3 --dropout 0.
 python3 -u main.py MPG minesweeper $args --heads 1 --n-layers 5 --dropout 0.4 --lr 0.001 --alpha 0.32 --asym --skip-connections 3 --weighted
 python3 -u main.py PG tolokers $args --heads 1 --n-layers 2 --dropout 0.5 --lr 0.010 --alpha 0.07 --skip-connections 6
 python3 -u main.py PG questions $args --heads 3 --n-layers 2 --dropout 0.7 --lr 0.001 --alpha 0.06 --skip-connections 5 --weighted
+
+# For large graphs
+python3 -u main.py PG arxiv $args --batched --lr 0.001 --heads 7 --n-layers 2 --dropout 0.5 --alpha 0.14 --skip-connections 5
+python3 -u main.py MPG products $args --batched --lr 0.001 --heads 6 --n-layers 2 --dropout 0.3 --alpha 0.27 --asym --skip-connections 0
 
 # For Long-range graph benchmarks 
 # Codebase: https://github.com/toenshoff/LRGB

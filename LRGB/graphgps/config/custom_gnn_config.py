@@ -24,3 +24,6 @@ def custom_gnn_cfg(cfg):
     cfg.gnn.als.heads = 0
     cfg.gnn.als.alpha = 0.0
     cfg.gnn.als.skip_connections = 0
+
+    # PPR alpha for PPNP and GPRGNN
+    cfg.gnn.ppr = 0.5
