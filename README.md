@@ -67,4 +67,6 @@ for dataset in vocsuperpixels coco; do
 done
 ```
 
+You can find the checkpoints of trained models in [the release page](https://github.com/cf020031308/ALS/releases/tag/model).
+
 ## Citation
