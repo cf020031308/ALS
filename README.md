@@ -15,14 +15,14 @@ Besides, we design a short-range message passing module for ALS to handle hetero
 
 | Dataset                | Graph Type   | SotA method | SotA Accuracy | **ALS Accuracy** |
 |------------------------|--------------|-------------|---------------|------------------|
-| Amazon Computer        | Homophilic   | OrderedGNN  | 92.03         | **92.11**        |
+| Amazon Computer        | Homophilic   | IGNN        | **92.19**     | 92.11            |
 | Amazon Photo           | Homophilic   | OrderedGNN  | 95.10         | **95.94**        |
 | Coauthor CS            | Homophilic   | GGCN        | 95.25         | **96.22**        |
 | Coauthor Physics       | Homophilic   | GGCN        | 97.07         | **97.54**        |
-| WikiCS                 | Homophilic   | OrderedGNN  | 79.01         | **80.97**        |
-| Roman Empire           | Heterophilic | GAT-sep     | 88.75         | **88.90**        |
-| Amazon Ratings         | Heterophilic | GraphSAGE   | 53.63         | **54.10**        |
-| Minesweeper            | Heterophilic | GAT-sep     | 93.91         | **95.55**        |
+| WikiCS                 | Homophilic   | IGNN        | 79.28         | **80.97**        |
+| Roman Empire           | Heterophilic | Co-GNN      | **90.39**     | 88.90            |
+| Amazon Ratings         | Heterophilic | Co-GNN      | 53.91         | **54.10**        |
+| Minesweeper            | Heterophilic | Co-GNN      | 95.52         | **95.55**        |
 | Tolokers               | Heterophilic | GAT-sep     | 83.78         | **86.09**        |
 | Questions              | Heterophilic | FSGNN       | **78.86**     | 78.26            |
 | OGB-Arxiv | Large | - | [Leaderboard](https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-arxiv) | 72.71 |
@@ -30,9 +30,13 @@ Besides, we design a short-range message passing module for ALS to handle hetero
 | PascalVOC-SP           | Long-range   | GatedGCN    | 38.80         | **39.59**        |
 | COCO-SP                | Long-range   | GatedGCN    | 29.22         | **30.08**        |
 | PascalVOC-SP (with GT) | Long-range   | GraphGPS    | 44.40         | **44.93**        |
-| COCO-SP (with GT)      | Long-range   | Graph Mamba | **39.74**     | 39.23            |
+| COCO-SP (with GT)      | Long-range   | Graph Mamba | 39.09         | **39.23**        |
 
 ## Reproduce Experiments
+
+Install dependencies by `pip install -r requirements.txt`.
+
+Then, run the following commands (with optimal hyperparameters) to reproduce our experiments.
 
 ```bash
 args="--implicit --with-cg --with-basis --with-stop --max-epochs 1000 --runs 10 --early-stop-epochs 100 --hidden 32"
@@ -70,3 +74,17 @@ done
 You can find the checkpoints of trained models in [the release page](https://github.com/cf020031308/ALS/releases/tag/model).
 
 ## Citation
+
+```bibtex
+@article{LUO2026114235,
+title = {ALS: Attentive long-short-range message passing for graph representation learning},
+journal = {Pattern Recognition},
+volume = {180},
+pages = {114235},
+year = {2026},
+issn = {0031-3203},
+doi = {https://doi.org/10.1016/j.patcog.2026.114235},
+url = {https://www.sciencedirect.com/science/article/pii/S0031320326012008},
+author = {Yi Luo and Xu Sun and Guangchun Luo and Aiguo Chen}
+}
+```
